@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<WebAPIDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("WebAPIConnection"));
+
 });
 
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();

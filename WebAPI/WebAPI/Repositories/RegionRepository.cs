@@ -7,6 +7,7 @@ namespace WebAPI.Repositories
     public class RegionRepository : IRegionRepository
     {
         private readonly WebAPIDbContext webAPIDbContext;
+
         public RegionRepository(WebAPIDbContext webAPIDbContext)
         {
             this.webAPIDbContext = webAPIDbContext;

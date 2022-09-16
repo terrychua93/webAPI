@@ -4,6 +4,8 @@ namespace WebAPI.Repositories
 {
     public interface IWalkRepository
     {
-        IEnumerable<Walk> GetAll();
+        Task<IEnumerable<Walk>> GetAllAsync();
+        Task<Walk> GetAsync(Guid id);
+        Task<Walk> AddAsync(Walk walk);
     }
 }
