@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetWalkById(Guid id)
         {
             var walks = await walkRepository.GetAsync(id);
-            if(walks == null)
+            if (walks == null)
             {
                 return NotFound();
             }
@@ -44,30 +44,76 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddWalk(Walk walk)
+        public async Task<IActionResult> AddWalk([FromBody] Models.DTO.AddWalkRequest addwalkquest)
         {
-            /* Request to Domain model */
-            walk = mapper.Map<Walk>(walk);
-            if(walk == null)
+
+            /*Convert DTO to Domain Obj*/
+            var walkDomain = new Models.Domain.Walk
+            {
+                Length = addwalkquest.Length,
+                Name = addwalkquest.Name,
+                RegionId = addwalkquest.RegionId,
+                WalkDifficultyId = addwalkquest.WalkDifficultyId,
+
+            };
+
+            /*Pass domain object to repository to persist it*/
+            walkDomain = await walkRepository.AddAsync(walkDomain);
+            /*Convert to Domain object back to DTO*/
+            var walkDTO = mapper.Map<Models.DTO.Walk>(walkDomain);
+            /*SendFileFallback DTO response back to Client*/
+            return CreatedAtAction(nameof(GetWalkById), new { id = walkDTO.Id }, walkDTO);
+        }
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateWalk([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkRequest updatewalkquest)
+        {
+
+            /*Covert DTO to Domain model*/
+            var walkDomain = new Models.Domain.Walk()
+            {
+                Name = updatewalkquest.Name,
+                Length = updatewalkquest.Length,
+                RegionId = updatewalkquest.RegionId,
+                WalkDifficultyId = updatewalkquest.WalkDifficultyId,
+            };
+
+            walkDomain = await walkRepository.UpdateAsync(id, walkDomain);
+
+            if (walkDomain == null)
+            {
+                return NotFound();
+            }
+
+            /*Covert Domain back to DTO model*/
+            var walkDTO = new Models.DTO.Walk
+            {
+                Id = walkDomain.Id,
+                Name = walkDomain.Name,
+                Length = walkDomain.Length,
+                RegionId = walkDomain.RegionId,
+                WalkDifficultyId = walkDomain.WalkDifficultyId,
+            };
+
+            return Ok(walkDTO);
+
+
+        }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteWalk([FromRoute] Guid id)
+        {
+            var walks = await walkRepository.DeleteAsync(id);
+            if (walks == null)
             {
                 return NotFound();
             }
 
 
-            /* Pass details to Repository */
-            walk = await walkRepository.AddAsync(walk);
-
-            /* Convert back to DTO */
-            var walkDTO = new Models.DTO.Walk() {
-                Id = walk.Id,
-                Name = walk.Name,
-                Length = walk.Length,
-            
-            };
-
-            return CreatedAtAction(nameof(GetWalkById), new { id = walkDTO.Id }, walkDTO);
-
+            return Ok();
         }
-        
+
     }
 }

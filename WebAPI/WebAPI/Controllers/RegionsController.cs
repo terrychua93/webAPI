@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
                 Population = region.Population
             };
 
-            return CreatedAtAction(nameof(GetAllRegions), new { id = regionDTO.RegionId },regionDTO);
+            return CreatedAtAction(null,regionDTO);
         }
 
         [HttpDelete("{id:guid}")]

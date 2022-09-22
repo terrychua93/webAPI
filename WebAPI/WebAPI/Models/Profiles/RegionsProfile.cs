@@ -6,7 +6,7 @@ namespace WebAPI.Models.Profiles
     {
         public RegionsProfile()
         {
-            CreateMap<Models.Domain.Region, Models.DTO.Region>().ForMember(dest => dest.RegionId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<Models.Domain.Region, Models.DTO.Region>().ForMember(dest => dest.RegionId, opt => opt.MapFrom(src => src.Id)).ReverseMap();
         }
     }
 }
